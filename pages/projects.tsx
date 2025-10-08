@@ -3,6 +3,7 @@ import { DATABASE_ID, TOKEN } from '@/config';
 import Head from 'next/head';
 import { GetServerSideProps } from 'next';
 import ProjectItem from '@/components/projects/projectItem';
+import { useTheme } from 'next-themes';
 
 // Notion API의 실제 응답 구조에 맞는 타입 정의
 interface NotionRichText {
@@ -144,6 +145,7 @@ export interface ProjectData {
 }
 
 export default function Projects({ projects }: { projects: NotionResponse }) {
+    const { theme } = useTheme();
     const databaseList: ProjectData[] = projects.results.map((project) => ({
         id: project.id,
         name: extractTitle(project.properties.Name),
@@ -156,15 +158,17 @@ export default function Projects({ projects }: { projects: NotionResponse }) {
 
     return (
         <Layout>
-            <Head>
-                <title>홈 - 내 포트폴리오</title>
-                <meta name="description" content="개발자 포트폴리오 홈페이지" />
-            </Head>
+            <div className="flex flex-col items-center justify-center min-h-screen px-2 mb-5">
+                <Head>
+                    <title>홈 - 내 포트폴리오</title>
+                    <meta name="description" content="개발자 포트폴리오 홈페이지" />
+                </Head>
 
-            <div className="grid grid-cols-1 gap-8 p-12 m-4 md:grid-cols-2">
-                {databaseList.map((aProject) => (
-                    <ProjectItem key={aProject.id} data={aProject} />
-                ))}
+                <div className="container mx-auto grid justify-center gap-8 p-12 m-4">
+                    {databaseList.map((aProject) => (
+                        <ProjectItem key={aProject.id} data={aProject} theme={theme} />
+                    ))}
+                </div>
             </div>
         </Layout>
     );

@@ -4,8 +4,16 @@ import { ThemeProvider } from 'next-themes';
 
 export default function App({ Component, pageProps }: AppProps) {
     return (
-        <ThemeProvider attribute="class">
-            <Component {...pageProps} />
+        <ThemeProvider
+            attribute="class"
+            defaultTheme="light"
+            enableSystem={false}
+            disableTransitionOnChange={false}
+            storageKey="portfolio-theme"
+        >
+            <div suppressHydrationWarning>
+                <Component {...pageProps} />
+            </div>
         </ThemeProvider>
     );
 }

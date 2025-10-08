@@ -3,7 +3,7 @@ import Footer from './footer';
 
 export default function Layout({ children }: { children: React.ReactNode }) {
     return (
-        <div className="bg-primary">
+        <div>
             <Header />
             <main>{children}</main>
             <Footer />

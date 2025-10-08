@@ -9,6 +9,23 @@ export default function DarkModeToggleButton() {
         setMounted(true);
     }, []);
 
+    const handleThemeToggle = () => {
+        const newTheme = theme === 'dark' ? 'light' : 'dark';
+        setTheme(newTheme);
+
+        // 수동으로 HTML 클래스 토글
+        if (typeof document !== 'undefined') {
+            const htmlElement = document.documentElement;
+            if (newTheme === 'dark') {
+                htmlElement.classList.add('dark');
+                htmlElement.classList.remove('light');
+            } else {
+                htmlElement.classList.add('light');
+                htmlElement.classList.remove('dark');
+            }
+        }
+    };
+
     if (!mounted) {
         return null;
     }
@@ -16,13 +33,14 @@ export default function DarkModeToggleButton() {
     return (
         <>
             <button
-                className={`inline-flex items-center border-0 py-1 px-3 rounded text-base mt-4 md:mt-0 focus:outline-none bg-gray-100 hover:bg-gray-50 text-gray-800 hover:text-orange-500 ${
+                className={`inline-flex items-center border-0 py-1 px-3 rounded text-base mt-4 md:mt-0 focus:outline-none  ${
                     theme === 'dark'
                         ? 'bg-slate-600 text-slate-400 hover:bg-slate-700 hover:text-yellow-300'
-                        : ''
+                        : 'bg-gray-100 hover:bg-gray-50 text-gray-800 hover:text-orange-500'
                 }`}
                 type="button"
-                onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                onClick={handleThemeToggle}
+                title={`현재 테마: ${theme === 'dark' ? '다크' : '라이트'} 모드`}
             >
                 {theme === 'dark' ? (
                     <>
