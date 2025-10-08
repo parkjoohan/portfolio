@@ -70,7 +70,6 @@ export default function ProjectItem({ data, theme }: { data: ProjectData; theme?
                 quality={100}
                 priority={false}
             />
-
             <div className="p-4 flex flex-col justify-center">
                 <h1 className="text-3xl font-bold">{title}</h1>
                 <h3 className="mt-4 text-xl">{description}</h3>

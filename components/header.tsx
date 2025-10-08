@@ -27,6 +27,13 @@ export default function Header() {
                         </Link>
 
                         <Link
+                            href="/introduces"
+                            className={`mr-5  ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
+                        >
+                            소개
+                        </Link>
+
+                        <Link
                             href="/projects"
                             className={`mr-5 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}
                         >

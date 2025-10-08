@@ -1,8 +1,7 @@
 import Layout from '@/components/layout';
-import { DATABASE_ID, TOKEN } from '@/config';
-import Head from 'next/head';
-import { GetServerSideProps } from 'next';
 import ProjectItem from '@/components/projects/projectItem';
+import { DATABASE_ID, TOKEN } from '@/config';
+import { GetServerSideProps } from 'next';
 import { useTheme } from 'next-themes';
 
 // Notion API의 실제 응답 구조에 맞는 타입 정의
@@ -159,11 +158,6 @@ export default function Projects({ projects }: { projects: NotionResponse }) {
     return (
         <Layout>
             <div className="flex flex-col items-center justify-center min-h-screen px-2 mb-5">
-                <Head>
-                    <title>홈 - 내 포트폴리오</title>
-                    <meta name="description" content="개발자 포트폴리오 홈페이지" />
-                </Head>
-
                 <div className="container mx-auto grid justify-center gap-8 p-12 m-4">
                     {databaseList.map((aProject) => (
                         <ProjectItem key={aProject.id} data={aProject} theme={theme} />
