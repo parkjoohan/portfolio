@@ -181,15 +181,15 @@ export const getServerSideProps: GetServerSideProps = async () => {
         body: JSON.stringify({
             sorts: [
                 {
+                    property: 'WorkPeriod',
+                    direction: 'descending',
+                },
+                {
                     property: 'Name',
                     direction: 'ascending',
                 },
                 {
                     property: 'Skills',
-                    direction: 'ascending',
-                },
-                {
-                    property: 'WorkPeriod',
                     direction: 'ascending',
                 },
                 {
