@@ -1,5 +1,7 @@
 import { ProjectData } from '@/pages/projects';
 import Image from 'next/image';
+import { useState, MouseEvent } from 'react';
+import NotionModal from './notionModal';
 
 export default function ProjectItem({ data, theme }: { data: ProjectData; theme?: string }) {
     const title = data.name;
@@ -9,24 +11,27 @@ export default function ProjectItem({ data, theme }: { data: ProjectData; theme?
     const start = data.workPeriod.split('~')[0];
     const end = data.workPeriod.split('~')[1];
     const imageUrl = data.imageUrl;
+    const public_url = data.projectUrl;
+
+    const [open, setOpen] = useState(false);
+
+    const handleCardClick = () => {
+        if (open) return; // 모달 열려있으면 카드 클릭 무시
+        if (public_url) setOpen(true);
+    };
+
+    const openGithub = (e: MouseEvent) => {
+        e.stopPropagation(); // 카드 onClick 전파 방지
+        window.open(github || '#', '_blank');
+    };
 
     const calculatedPeriod = (start: string, end: string) => {
-        const startDateStringArray = start.split('-');
-        const endDateStringArray = end.split('-');
-
-        const startDate = new Date(
-            Number(startDateStringArray[0]),
-            Number(startDateStringArray[1]),
-            Number(startDateStringArray[2])
-        );
-        const endDate = new Date(
-            Number(endDateStringArray[0]),
-            Number(endDateStringArray[1]),
-            Number(endDateStringArray[2])
-        );
+        const [sy, sm, sd] = start.split('-').map(Number);
+        const [ey, em, ed] = end.split('-').map(Number);
+        const startDate = new Date(sy, (sm || 1) - 1, sd || 1);
+        const endDate = new Date(ey, (em || 1) - 1, ed || 1);
         const diffInMs = Math.abs(endDate.getTime() - startDate.getTime());
-        const result = diffInMs / (1000 * 60 * 60 * 24);
-        return result;
+        return Math.floor(diffInMs / (1000 * 60 * 60 * 24));
     };
 
     const tagColorClasses = [
@@ -51,54 +56,73 @@ export default function ProjectItem({ data, theme }: { data: ProjectData; theme?
         const idx = Math.abs(hash) % tagColorClasses.length;
         return tagColorClasses[idx];
     };
+
     return (
-        <div
-            className={`flex m-3 rounded-xl w-full
-          transition duration-300 transform border ${
-              theme === 'dark'
-                  ? 'border-gray-200/50 hover:shadow-gray-400/40 hover:scale-105 hover:shadow-lg'
-                  : 'border-gray-300 hover:scale-105 hover:shadow-lg'
-          }`}
-        >
-            <Image
-                className="rounded-xl"
-                src={imageUrl || ''}
-                alt="cover image"
-                width={200}
-                height={200}
-                style={{ objectFit: 'cover', width: '400px', height: '250px' }}
-                quality={100}
-                priority={false}
-            />
-            <div className="p-4 flex flex-col justify-center">
-                <h1 className="text-3xl font-bold">{title}</h1>
-                <h3 className="mt-4 text-xl">{description}</h3>
-                <p className="my-1 ">
-                    작업기간 : {start} ~ {end} ({calculatedPeriod(start || '', end || '')}일)
-                </p>
-                <div className="flex flex-wrap items-start mt-2">
-                    {skills.map((aSkill: string) => (
-                        <h1
-                            className={`px-2 py-1 mr-2 rounded-md w-auto [min-inline-size:fit-content] mb-1 ${getTagColorClass(
-                                aSkill
-                            )}`}
-                            key={aSkill}
-                        >
-                            {aSkill}
-                        </h1>
-                    ))}
+        <>
+            <div
+                className={`flex m-3 rounded-xl w-full transition duration-300 transform border ${
+                    theme === 'dark'
+                        ? 'border-gray-200/50 hover:shadow-gray-400/40 hover:scale-105 hover:shadow-lg'
+                        : 'border-gray-300 hover:scale-105 hover:shadow-lg'
+                }`}
+                onClick={handleCardClick}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                    if (open) return; // 모달 열려있으면 키 조작 무시
+                    if (e.key === 'Enter' || e.key === ' ') handleCardClick();
+                }}
+            >
+                <Image
+                    className="rounded-xl"
+                    src={imageUrl || ''}
+                    alt="cover image"
+                    width={200}
+                    height={200}
+                    style={{ objectFit: 'cover', width: '400px', height: '250px' }}
+                    quality={100}
+                    priority={false}
+                />
+
+                <div className="p-4 flex flex-col justify-center">
+                    <h1 className="text-3xl font-bold">{title}</h1>
+                    <h3 className="mt-4 text-xl">{description}</h3>
+                    <p className="my-1 ">
+                        작업기간 : {start} ~ {end} ({calculatedPeriod(start || '', end || '')}일)
+                    </p>
+                    <div className="flex flex-wrap items-start mt-2">
+                        {skills.map((aSkill: string) => (
+                            <h1
+                                className={`px-2 py-1 mr-2 rounded-md w-auto [min-inline-size:fit-content] mb-1 ${getTagColorClass(
+                                    aSkill
+                                )}`}
+                                key={aSkill}
+                            >
+                                {aSkill}
+                            </h1>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="p-4 flex flex-col ml-auto">
+                    <Image
+                        src={`${theme === 'dark' ? '/github-mark-white.png' : '/github-mark.png'}`}
+                        onClick={openGithub}
+                        alt="github icon"
+                        width={40}
+                        height={40}
+                        className="cursor-pointer"
+                    />
                 </div>
             </div>
-            <div className="p-4 flex flex-col ml-auto">
-                <Image
-                    src={`${theme === 'dark' ? '/github-mark-white.png' : '/github-mark.png'}`}
-                    onClick={() => window.open(github || '#', '_blank')}
-                    alt="github icon"
-                    width={40}
-                    height={40}
-                    className="cursor-pointer"
-                />
-            </div>
-        </div>
+
+            {/* 모달은 카드 바깥으로 분리 */}
+            <NotionModal
+                isOpen={open}
+                onClose={() => setOpen(false)}
+                url={public_url || ''}
+                title={title}
+            />
+        </>
     );
 }

@@ -89,6 +89,7 @@ interface NotionProject {
     id: string;
     cover: NotionCoverProperty | null;
     properties: NotionProjectProperties;
+    url: string;
 }
 
 interface NotionResponse {
@@ -141,6 +142,7 @@ export interface ProjectData {
     githubUrl: string;
     workPeriod: string;
     imageUrl: string;
+    projectUrl: string;
 }
 
 export default function Projects({ projects }: { projects: NotionResponse }) {
@@ -153,7 +155,10 @@ export default function Projects({ projects }: { projects: NotionResponse }) {
         githubUrl: extractGithubUrl(project.properties.Github),
         workPeriod: extractWorkPeriod(project.properties.WorkPeriod),
         imageUrl: extractImageUrl(project.cover),
+        projectUrl: project.url,
     }));
+    console.log(projects);
+    console.log(databaseList);
 
     return (
         <Layout>
