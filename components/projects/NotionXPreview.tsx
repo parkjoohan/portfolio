@@ -17,15 +17,9 @@ const Modal = dynamic(() => import('react-notion-x/build/third-party/modal').the
     ssr: false,
 });
 
-function extractPlainText(prop?: any): string {
+function extractPlainText(prop?: string[][]): string {
     if (!prop) return '';
-    try {
-        return (Array.isArray(prop) ? prop : [])
-            .map((chunk: any) => (Array.isArray(chunk) ? String(chunk[0] ?? '') : ''))
-            .join('');
-    } catch {
-        return '';
-    }
+    return prop.map((chunk) => chunk[0] ?? '').join('');
 }
 
 /** "참고"가 포함된 블록 이후의 모든 블록 제거 */
@@ -36,7 +30,7 @@ function trimAfterReference(recordMap: ExtendedRecordMap): ExtendedRecordMap {
     // 1️⃣ 참고 단어가 포함된 첫 블록을 찾음
     for (let i = 0; i < blocks.length; i++) {
         const [, block] = blocks[i];
-        const v = (block as any)?.value;
+        const v = block.value;
         if (!v?.properties) continue;
         const text = extractPlainText(
             v.properties.title || v.properties.caption || []
