@@ -90,7 +90,7 @@ export default function NotionModal({ isOpen, onClose, url, title }: NotionModal
 
             {/* Body */}
             <div
-                className={`relative w-full ${
+                className={`py-20 relative w-full ${
                     isDark ? 'bg-[#0b0f14] text-gray-100' : 'bg-white text-gray-900'
                 }`}
                 style={{ height: 'calc(100% - 52px)', overflow: 'auto' }}
