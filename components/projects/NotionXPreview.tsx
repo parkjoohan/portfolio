@@ -51,7 +51,20 @@ export default function NotionXPreview({
         };
     }, [pageId]);
 
-    if (loading) return <div className="p-4 text-sm text-gray-500">불러오는 중…</div>;
+    if (loading)
+        return (
+            <div className="flex items-center justify-center h-full py-10">
+                {/* 스피너 */}
+                <div
+                    className={`w-8 h-8 border-4 rounded-full animate-spin ${
+                        darkMode
+                            ? 'border-gray-600 border-t-gray-300'
+                            : 'border-gray-300 border-t-gray-600'
+                    }`}
+                />
+            </div>
+        );
+
     if (err) return <div className="p-4 text-sm text-red-500">불러오기 실패: {err}</div>;
     if (!recordMap) return null;
 
