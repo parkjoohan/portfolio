@@ -17,7 +17,7 @@ export default function Hero({ theme }: { theme?: string }) {
                     안녕하세요. 박주한입니다.
                 </h1>
                 <div className="mt-8 space-y-4">
-                    <div className="flex items-start space-x-3">
+                    <div className="flex items-center space-x-3">
                         <div className="flex-shrink-0 w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center">
                             <span className="text-white text-sm font-bold">1</span>
                         </div>
@@ -26,11 +26,11 @@ export default function Hero({ theme }: { theme?: string }) {
                                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                             }`}
                         >
-                            안녕하세요! 포기하지 않는 개발자 박주한입니다.
+                            안녕하세요! <b>포기하지 않는 개발자 박주한</b>입니다.
                         </p>
                     </div>
 
-                    <div className="flex items-start space-x-3">
+                    <div className="flex items-center space-x-3">
                         <div className="flex-shrink-0 w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center">
                             <span className="text-white text-sm font-bold">2</span>
                         </div>
@@ -39,11 +39,11 @@ export default function Hero({ theme }: { theme?: string }) {
                                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                             }`}
                         >
-                            항상 사용자가 편하게 사용하는 플랫폼을 개발하고자 노력합니다.
+                            <b>항상 사용자가 편하게 사용</b>하는 플랫폼을 개발하고자 노력합니다.
                         </p>
                     </div>
 
-                    <div className="flex items-start space-x-3">
+                    <div className="flex items-center space-x-3">
                         <div className="flex-shrink-0 w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center">
                             <span className="text-white text-sm font-bold">3</span>
                         </div>
@@ -57,7 +57,7 @@ export default function Hero({ theme }: { theme?: string }) {
                         </p>
                     </div>
 
-                    <div className="flex items-start space-x-3">
+                    <div className="flex items-center space-x-3">
                         <div className="flex-shrink-0 w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center">
                             <span className="text-white text-sm font-bold">4</span>
                         </div>
@@ -66,11 +66,12 @@ export default function Hero({ theme }: { theme?: string }) {
                                 theme === 'dark' ? 'text-gray-300' : 'text-gray-700'
                             }`}
                         >
-                            여러 팀원과 협업을 통해 소통하고 도우며 개발하는 것을 좋아합니다.
+                            여러 팀원과 <b>적극적으로 소통하고 협업</b>하며 개발하는 것을
+                            좋아합니다.
                         </p>
                     </div>
 
-                    <div className="flex items-start space-x-3">
+                    <div className="flex items-center space-x-3">
                         <div className="flex-shrink-0 w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center">
                             <span className="text-white text-sm font-bold">5</span>
                         </div>
