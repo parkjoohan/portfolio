@@ -157,8 +157,6 @@ export default function Projects({ projects }: { projects: NotionResponse }) {
         imageUrl: extractImageUrl(project.cover),
         projectUrl: project.url,
     }));
-    console.log(projects);
-    console.log(databaseList);
 
     return (
         <Layout>

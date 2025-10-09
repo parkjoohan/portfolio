@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import type { ExtendedRecordMap } from 'notion-types';
 
@@ -6,7 +6,6 @@ const NotionRenderer = dynamic(() => import('react-notion-x').then((m) => m.Noti
     ssr: false,
 });
 
-// (옵션) 코드/수식/컬렉션/모달
 const Code = dynamic(() => import('react-notion-x/build/third-party/code').then((m) => m.Code));
 const Collection = dynamic(() =>
     import('react-notion-x/build/third-party/collection').then((m) => m.Collection)
@@ -17,6 +16,49 @@ const Equation = dynamic(() =>
 const Modal = dynamic(() => import('react-notion-x/build/third-party/modal').then((m) => m.Modal), {
     ssr: false,
 });
+
+function extractPlainText(prop?: any): string {
+    if (!prop) return '';
+    try {
+        return (Array.isArray(prop) ? prop : [])
+            .map((chunk: any) => (Array.isArray(chunk) ? String(chunk[0] ?? '') : ''))
+            .join('');
+    } catch {
+        return '';
+    }
+}
+
+/** "참고"가 포함된 블록 이후의 모든 블록 제거 */
+function trimAfterReference(recordMap: ExtendedRecordMap): ExtendedRecordMap {
+    const blocks = recordMap.block ? Object.entries(recordMap.block) : [];
+    let cutIndex = -1;
+
+    // 1️⃣ 참고 단어가 포함된 첫 블록을 찾음
+    for (let i = 0; i < blocks.length; i++) {
+        const [, block] = blocks[i];
+        const v = (block as any)?.value;
+        if (!v?.properties) continue;
+        const text = extractPlainText(
+            v.properties.title || v.properties.caption || []
+        ).toLowerCase();
+        if (text.includes('참고')) {
+            cutIndex = i;
+            break;
+        }
+    }
+
+    // 참고 단어가 없으면 원본 반환
+    if (cutIndex === -1) return recordMap;
+
+    // 2️⃣ 참고 이후 블록 제거
+    const filteredEntries = blocks.slice(0, cutIndex);
+    const newRecordMap: ExtendedRecordMap = {
+        ...recordMap,
+        block: Object.fromEntries(filteredEntries),
+    };
+
+    return newRecordMap;
+}
 
 export default function NotionXPreview({
     pageId,
@@ -51,10 +93,14 @@ export default function NotionXPreview({
         };
     }, [pageId]);
 
+    const trimmedRecordMap = useMemo(
+        () => (recordMap ? trimAfterReference(recordMap) : null),
+        [recordMap]
+    );
+
     if (loading)
         return (
             <div className="flex items-center justify-center h-full py-10">
-                {/* 스피너 */}
                 <div
                     className={`w-8 h-8 border-4 rounded-full animate-spin ${
                         darkMode
@@ -66,11 +112,11 @@ export default function NotionXPreview({
         );
 
     if (err) return <div className="p-4 text-sm text-red-500">불러오기 실패: {err}</div>;
-    if (!recordMap) return null;
+    if (!trimmedRecordMap) return null;
 
     return (
         <NotionRenderer
-            recordMap={recordMap}
+            recordMap={trimmedRecordMap}
             fullPage={false}
             darkMode={darkMode}
             components={{ Code, Collection, Equation, Modal }}
