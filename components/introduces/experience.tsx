@@ -25,7 +25,9 @@ export default function Experience({ theme }: { theme?: string }) {
                 {/* 삼성청년SW아카데미 */}
                 <div
                     className={`p-6 rounded-lg border-l-4 border-indigo-500 ${
-                        theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'
+                        theme === 'dark'
+                            ? 'bg-gray-800 shadow-[4px_4px_10px_rgba(0,0,0,0.3)]'
+                            : 'bg-gray-100 shadow-[4px_4px_10px_rgba(0,0,0,0.2)]'
                     }`}
                 >
                     <h2
@@ -97,7 +99,9 @@ export default function Experience({ theme }: { theme?: string }) {
                 {/* 육군 장교 */}
                 <div
                     className={`p-6 rounded-lg border-l-4 border-indigo-500 ${
-                        theme === 'dark' ? 'bg-gray-800' : 'bg-gray-50'
+                        theme === 'dark'
+                            ? 'bg-gray-800 shadow-[4px_4px_10px_rgba(0,0,0,0.3)]'
+                            : 'bg-gray-100 shadow-[4px_4px_10px_rgba(0,0,0,0.2)]'
                     }`}
                 >
                     <h2
