@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import type { ExtendedRecordMap } from 'notion-types';
+import type { ExtendedRecordMap, Block, Role } from 'notion-types';
 
 const NotionRenderer = dynamic(() => import('react-notion-x').then((m) => m.NotionRenderer), {
     ssr: false,
@@ -22,36 +22,40 @@ function extractPlainText(prop?: string[][]): string {
     return prop.map((chunk) => chunk[0] ?? '').join('');
 }
 
+type BlockWithRole = { role: Role; value: Block };
+
+function unwrapBlock(input: Block | BlockWithRole): Block {
+    return 'role' in input ? input.value : input;
+}
+
 /** "참고"가 포함된 블록 이후의 모든 블록 제거 */
 function trimAfterReference(recordMap: ExtendedRecordMap): ExtendedRecordMap {
     const blocks = recordMap.block ? Object.entries(recordMap.block) : [];
     let cutIndex = -1;
 
-    // 1️⃣ 참고 단어가 포함된 첫 블록을 찾음
+    // "참고" 단어가 포함된 첫 블록 찾기
     for (let i = 0; i < blocks.length; i++) {
-        const [, block] = blocks[i];
-        const v = block.value;
-        if (!v?.properties) continue;
-        const text = extractPlainText(
-            v.properties.title || v.properties.caption || []
-        ).toLowerCase();
+        const [, blockEntry] = blocks[i];
+        const v = unwrapBlock(blockEntry.value);
+
+        const title = v.properties?.title;
+        const caption = v.properties?.caption;
+        const text = extractPlainText(title || caption || []).toLowerCase();
+
         if (text.includes('참고')) {
             cutIndex = i;
             break;
         }
     }
 
-    // 참고 단어가 없으면 원본 반환
     if (cutIndex === -1) return recordMap;
 
-    // 2️⃣ 참고 이후 블록 제거
     const filteredEntries = blocks.slice(0, cutIndex);
-    const newRecordMap: ExtendedRecordMap = {
+
+    return {
         ...recordMap,
         block: Object.fromEntries(filteredEntries),
     };
-
-    return newRecordMap;
 }
 
 export default function NotionXPreview({
@@ -67,12 +71,15 @@ export default function NotionXPreview({
 
     useEffect(() => {
         let ignore = false;
+
         (async () => {
             try {
                 setLoading(true);
                 setErr(null);
+
                 const res = await fetch(`/api/notion-x/${pageId}`);
                 if (!res.ok) throw new Error(await res.text());
+
                 const data = await res.json();
                 if (!ignore) setRecordMap(data.recordMap as ExtendedRecordMap);
             } catch (e: unknown) {
@@ -82,6 +89,7 @@ export default function NotionXPreview({
                 if (!ignore) setLoading(false);
             }
         })();
+
         return () => {
             ignore = true;
         };
@@ -92,7 +100,7 @@ export default function NotionXPreview({
         [recordMap]
     );
 
-    if (loading)
+    if (loading) {
         return (
             <div className="flex items-center justify-center h-full py-10">
                 <div
@@ -104,8 +112,12 @@ export default function NotionXPreview({
                 />
             </div>
         );
+    }
 
-    if (err) return <div className="p-4 text-sm text-red-500">불러오기 실패: {err}</div>;
+    if (err) {
+        return <div className="p-4 text-sm text-red-500">불러오기 실패: {err}</div>;
+    }
+
     if (!trimmedRecordMap) return null;
 
     return (
