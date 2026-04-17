@@ -7,7 +7,7 @@ export default function Work({ theme }: { theme?: string }) {
         'Zustand',
         'React Query',
         'Vite',
-        'Playwright',
+        'Vitest',
         'Yarn',
         'JAVA',
         'SpringBoot',
@@ -229,7 +229,7 @@ export default function Work({ theme }: { theme?: string }) {
                             <span className="absolute left-0 top-2 w-2 h-2 bg-indigo-500 rounded-full"></span>
                             <span>
                                 <span className="font-bold">
-                                    Playwright를 활용한 E2E 테스트 자동화 환경을 구축
+                                    Vitest를 활용한 E2E 테스트 자동화 환경을 구축
                                 </span>
                                 으로 사용 안정성을 검증하고, 배포 전 품질 보증 프로세스를 체계화
                             </span>
